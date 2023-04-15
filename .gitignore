@@ -1,0 +1,10 @@
+env/
+delay/
+.ipynb_checkpoints/
+__pycache__/
+delay2/
+trains2/
+*.sav2
+trains/
+/*.sav
+out.txt

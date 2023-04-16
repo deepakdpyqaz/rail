@@ -28,8 +28,14 @@ col1, col2 = st.columns(2)
 # Add the services to each column
 with col1:
     st.write(delay_prediction_info)
-    st.markdown(f'<img src="data:image/png;base64,{delay}" style="width:80%;">', unsafe_allow_html=True)
+    st.markdown(
+        f'<img src="data:image/png;base64,{delay}" style="width:80%;">',
+        unsafe_allow_html=True,
+    )
 
 with col2:
     st.write(station_statistics_info)
-    st.markdown(f'<img src="data:image/png;base64,{stats}" style="width:100%;">', unsafe_allow_html=True)
+    st.markdown(
+        f'<img src="data:image/png;base64,{stats}" style="width:100%;">',
+        unsafe_allow_html=True,
+    )

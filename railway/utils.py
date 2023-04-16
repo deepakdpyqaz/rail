@@ -6,12 +6,14 @@ from streamlit_folium import folium_static
 import joblib
 import base64
 
-@st.cache_data(show_spinner="Loading data...",persist=True)
+
+@st.cache_data(show_spinner="Loading data...", persist=True)
 def read_csv(file):
     return pd.read_csv(file)
 
-@st.cache_data(show_spinner="Building map...",persist=True, max_entries=50)
-def build_station_map(df,route=False):
+
+@st.cache_data(show_spinner="Building map...", persist=True, max_entries=50)
+def build_station_map(df, route=False):
     m = folium.Map(
         location=[df.latitude.mean(), df.longitude.mean()],
         zoom_start=5,
@@ -39,6 +41,7 @@ def build_station_map(df,route=False):
             opacity=1,
         ).add_to(m)
     st_data = folium_static(m, width=700)
+
 
 @st.cache_data
 def get_img_as_base64(file):

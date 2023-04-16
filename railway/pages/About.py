@@ -1,41 +1,22 @@
 import streamlit as st
 import base64
-from utils import get_img_as_base64
-
+from utils import get_img_as_base64, load_image
+import os
 # Set up the page layout
 st.set_page_config(page_title="Services", page_icon=":train:", layout="wide")
 
-
-delay = get_img_as_base64("img/1.png")
-stats = get_img_as_base64("img/5.jpg")
-
-# Define the information for each service
-delay_prediction_info = """
-Predict the delay of a train by entering its number and departure time. Our algorithm uses historical data to provide an accurate prediction.
-"""
-
-station_statistics_info = """
-View statistics for a particular train station, such as the number of trains arriving and departing, the busiest times of day, and more.
-"""
-
-st.header("Features")
-st.write("")
-st.write("")
-
-# Define the layout of the page
-col1, col2 = st.columns(2)
-
-# Add the services to each column
+st.header("Features of the website")
+st.subheader("Data Visualization")
+col1, col2 = st.columns([2,1])
 with col1:
-    st.write(delay_prediction_info)
-    st.markdown(
-        f'<img src="data:image/png;base64,{delay}" style="width:80%;">',
-        unsafe_allow_html=True,
-    )
-
+    st.write(open("text/visualization.txt").read())
 with col2:
-    st.write(station_statistics_info)
-    st.markdown(
-        f'<img src="data:image/png;base64,{stats}" style="width:100%;">',
-        unsafe_allow_html=True,
-    )
+    st.image(load_image("img/visualization.jpeg"), use_column_width=True, caption="Data Visualization")
+
+st.subheader("Station Analysis")
+st.write(open("text/station_analysis.txt").read())
+st.image(load_image("img/5.jpg"),  use_column_width=True, caption="Station Analysis")
+
+st.subheader("Train Analysis")
+st.write(open("text/train.txt").read())
+st.image(load_image("img/1.png"),  use_column_width=True, caption="Station Analysis")

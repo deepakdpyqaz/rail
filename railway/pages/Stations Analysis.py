@@ -12,8 +12,11 @@ df = read_csv("data/full_data.csv")
 
 st.header("Station Analysis")
 
+@st.cache_data
+def get_unique_stations():
+    return df["station"].unique()
 # Add multiselect to select stations
-station_options = df["station"].unique()
+station_options = get_unique_stations()
 selected_stations = st.multiselect("Select Stations", station_options)
 
 # Filter data by selected stations
@@ -92,17 +95,34 @@ with cols2:
     # display the chart in the streamlit app
     st.altair_chart(chart)
 
+# -------------------------
+box_chart = (
+    alt.Chart(filtered_data)
+    .mark_boxplot()
+    .encode(x="type", y="train_delay_level", color="type")
+    .properties(title="Distribution of Delays by Train Type")
+)
 
-# Calculate the number of unique trains for each station
-unique_trains_per_station = (
-    df.groupby("station")["train_number"].nunique().reset_index()
-)
-unique_trains_per_station = unique_trains_per_station.sort_values(
-    "train_number", ascending=False
-)
+st.altair_chart(box_chart, use_container_width=True)
+
+
+# ------------------------- Plotting top 10 busiest train stations -------------------------
+
+@st.cache_data
+def get_unique_trains_per_station():
+    # Calculate the number of unique trains for each station
+    unique_trains_per_station = (
+        df.groupby("station")["train_number"].nunique().reset_index()
+    )
+    unique_trains_per_station = unique_trains_per_station.sort_values(
+        "train_number", ascending=False
+    ).reset_index(drop=True)
+    unique_trains_per_station.index = unique_trains_per_station.index + 1
+    return unique_trains_per_station
 
 # # Display the top 10 busiest train stations
-st.write("Top 10 busiest train stations:")
+st.write("Top 10 stations with most trains visiting:")
+unique_trains_per_station = get_unique_trains_per_station()
 st.table(unique_trains_per_station.head(10))
 
 # Display a bar chart showing the number of unique trains for each station
@@ -142,47 +162,18 @@ st.altair_chart(chart, use_container_width=True)
 
 # -----------------------
 
-chart_data = filtered_data.groupby(["year", "month"])["month_3"].mean().reset_index()
-line_chart = (
-    alt.Chart(chart_data)
-    .mark_line()
-    .encode(
-        x="month:T",
-        y="month_3:Q",
-        color=alt.Color("year:N"),
-        tooltip=["year", "month", alt.Tooltip("month_3:Q", format=".2f")],
-    )
-    .properties(width=600, height=300, title="Trend of Delay over Time")
-)
-st.altair_chart(line_chart)
+# chart_data = filtered_data.groupby(["year", "month"])["month_3"].mean().reset_index()
+# line_chart = (
+#     alt.Chart(chart_data)
+#     .mark_line()
+#     .encode(
+#         x="month:T",
+#         y="month_3:Q",
+#         color=alt.Color("year:N"),
+#         tooltip=["year", "month", alt.Tooltip("month_3:Q", format=".2f")],
+#     )
+#     .properties(width=600, height=300, title="Trend of Delay over Time")
+# )
+# st.altair_chart(line_chart)
 
 
-# -------------------------
-box_chart = (
-    alt.Chart(filtered_data)
-    .mark_boxplot()
-    .encode(x="type", y="train_delay_level", color="type")
-    .properties(title="Distribution of Delays by Train Type")
-)
-
-st.altair_chart(box_chart, use_container_width=True)
-
-# ------------------------
-# Filter data for relevant columns
-scatterplot_data = df[["distance", "duration", "train_delay_level"]]
-
-# Create scatterplot matrix using Altair
-scatterplot_matrix = (
-    alt.Chart(scatterplot_data)
-    .mark_point()
-    .encode(
-        alt.X(alt.repeat("column"), type="quantitative"),
-        alt.Y(alt.repeat("row"), type="quantitative"),
-        color="train_delay_level:N",
-    )
-    .properties(width=150, height=150)
-    .repeat(row=["distance", "duration"], column=["distance", "duration"])
-)
-
-# Display scatterplot matrix in Streamlit app
-st.write(scatterplot_matrix)

@@ -276,3 +276,5 @@ if train_name:
             st.error("Delay not available")
     except Exception as e:
         st.error("Error Occured in fetching data")
+else:
+    st.info("Select a train to view details")

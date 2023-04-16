@@ -5,7 +5,7 @@ import folium
 from streamlit_folium import folium_static
 import joblib
 import base64
-
+from PIL import Image
 
 @st.cache_data(show_spinner="Loading data...", persist=True)
 def read_csv(file):
@@ -49,6 +49,9 @@ def get_img_as_base64(file):
         data = f.read()
     return base64.b64encode(data).decode()
 
+@st.cache_data
+def load_image(file):
+    return Image.open(file)
 
 @st.cache_resource(show_spinner="Loading model...")
 def load_model(path):

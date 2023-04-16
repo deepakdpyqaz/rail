@@ -12,7 +12,7 @@ pi = math.pi
 st.set_option("deprecation.showPyplotGlobalUse", False)
 
 df = read_csv("data/data.csv")
-
+full_data = read_csv("data/full_data.csv")
 st.header("Exploratory Data Analysis")
 
 
@@ -31,18 +31,30 @@ chart = (
 
 st.altair_chart(chart)
 
-# Create a line chart showing the total distance travelled by each train
-st.subheader("The total distance travelled by each train")
+# ------------------------
+# Filter data for relevant columns
+st.subheader("Plot showing distance duration relationship of various delay levels")
+@st.cache_data
+def get_delay_level_data():
+    delay_data = full_data[["train_number","distance", "duration", "train_delay_level"]].groupby("train_number").mean().reset_index(drop=True)
+    return delay_data
 
-chart_data = df.groupby("number")["distance"].sum().reset_index()
-chart = (
-    alt.Chart(chart_data)
-    .mark_line()
-    .encode(x="number", y="distance")
-    .properties(width=600, height=400)
+
+scatterplot_data = get_delay_level_data()
+# Create scatterplot matrix using Altair
+scatterplot_matrix = (
+    alt.Chart(scatterplot_data)
+    .mark_point()
+    .encode(
+        alt.X("distance"),
+        alt.Y("duration"),
+        color="train_delay_level:N",
+    )
+    .repeat(row=["distance"], column=["duration"])
 )
-# Display the chart in Streamlit
-st.altair_chart(chart)
+
+# Display scatterplot matrix in Streamlit app
+st.altair_chart(scatterplot_matrix, use_container_width=True)
 
 
 st.subheader("Plot showing average distance travelled by various types of trains")
@@ -78,7 +90,7 @@ chart = (
 )
 
 # Create a line chart showing the change in the number of trains over time
-st.subheader("the change in the number of trains over time")
+st.subheader("The change in the number of trains over time")
 line_data = df.groupby("arrival")["number"].count().reset_index()
 line_data["arrival"] = pd.to_datetime(line_data["arrival"])
 line_chart = (

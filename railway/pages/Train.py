@@ -112,14 +112,7 @@ if train_name:
 
             def create_box(label, value):
                 html = f"""
-                <span style="
-                        display:inline-block; 
-                        background:{"#228B22" if value else "#880808"}; 
-                        color:#fff;padding: 2px 20px; 
-                        border-radius: 5px;
-                        margin: 10px; 
-                        box-shadow:inset 0px 0px 5px 1px #000;
-                    ">
+                <span style="display:inline-block; background:{"#228B22" if value else "#880808"}; color:#fff;padding: 2px 20px;  border-radius: 5px; margin: 10px;  box-shadow:inset 0px 0px 5px 1px #000;">
                         <p style="margin:0px">
                                 {label}
                         </p>
